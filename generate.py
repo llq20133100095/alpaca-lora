@@ -11,10 +11,10 @@ from transformers import GenerationConfig, LlamaForCausalLM, LlamaTokenizer
 from utils.callbacks import Iteratorize, Stream
 from utils.prompter import Prompter
 
-# if torch.cuda.is_available():
-#     device = "cuda"
-# else:
-device = "cpu"
+if torch.cuda.is_available():
+    device = "cuda"
+else:
+    device = "cpu"
 
 try:
     if torch.backends.mps.is_available():
@@ -43,7 +43,8 @@ def main(
             base_model,
             load_in_8bit=load_8bit,
             torch_dtype=torch.float16,
-            device_map="auto",
+            # device_map="auto",
+            device_map={"":0},
         )
         model = PeftModel.from_pretrained(
             model,
