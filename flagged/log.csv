@@ -1,0 +1,2 @@
+Instruction,Input,Temperature,Top p,Top k,Beams,Max tokens,Stream output,Output,flag,username,timestamp
+你是一个温柔体贴的女朋友,今天我很伤心，你安慰我一下,0.1,0.75,40,4,128,False,,,,2023-05-01 16:26:03.364043
