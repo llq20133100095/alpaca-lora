@@ -32,7 +32,7 @@ def train(
     data_path: str = "yahma/alpaca-cleaned",
     output_dir: str = "./lora-alpaca",
     # training hyperparams
-    batch_size: int = 128,
+    batch_size: int = 256,
     micro_batch_size: int = 4,
     num_epochs: int = 3,
     learning_rate: float = 3e-4,
@@ -118,12 +118,12 @@ def train(
         torch_dtype=torch.float16,
         device_map=device_map,
     )
-    model = PeftModel.from_pretrained(
-        model,
-        lora_weights,
-        torch_dtype=torch.float16,
-        device_map=device_map,
-    )
+    # model = PeftModel.from_pretrained(
+    #     model,
+    #     lora_weights,
+    #     torch_dtype=torch.float16,
+    #     device_map=device_map,
+    # )
 
     tokenizer = LlamaTokenizer.from_pretrained(base_model)
 
@@ -212,7 +212,7 @@ def train(
         # The two files above have a different name depending on how they were saved, but are actually the same.
         if os.path.exists(checkpoint_name):
             print(f"Restarting from {checkpoint_name}")
-            adapters_weights = torch.load(checkpoint_name)
+            adapters_weights = torch.load(checkpoint_name, map_location='cuda:0')
             set_peft_model_state_dict(model, adapters_weights)
         else:
             print(f"Checkpoint {checkpoint_name} not found")
@@ -253,7 +253,7 @@ def train(
             optim="adamw_torch",
             evaluation_strategy="steps" if val_set_size > 0 else "no",
             save_strategy="steps",
-            eval_steps=200 if val_set_size > 0 else None,
+            eval_steps=50 if val_set_size > 0 else None,
             save_steps=200,
             output_dir=output_dir,
             save_total_limit=3,
